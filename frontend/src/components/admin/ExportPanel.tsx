@@ -1,26 +1,33 @@
 import { Download } from 'lucide-react'
 import { useState } from 'react'
 import { exportApi, type ExportFormat } from '../../api/exportApi'
+import { extractErrorMessage } from '../../lib/api'
 import type { DoctorProgress, QuestionGroup } from '../../lib/types'
 
 interface ExportPanelProps {
   doctors: DoctorProgress[]
   groups: QuestionGroup[]
   presetDoctorId: number | null
+  notify: (message: string) => void
 }
 
-export default function ExportPanel({ doctors, groups, presetDoctorId }: ExportPanelProps) {
+export default function ExportPanel({ doctors, groups, presetDoctorId, notify }: ExportPanelProps) {
   const [doctorId, setDoctorId] = useState<string>(presetDoctorId ? String(presetDoctorId) : '')
   const [subgroupId, setSubgroupId] = useState<string>('')
   const [reviewStatus, setReviewStatus] = useState<string>('')
 
   async function handleDownload(format: ExportFormat) {
-    await exportApi.download({
-      format,
-      doctorId: doctorId ? Number(doctorId) : undefined,
-      subgroupId: subgroupId ? Number(subgroupId) : undefined,
-      reviewStatus: reviewStatus || undefined,
-    })
+    try {
+      await exportApi.download({
+        format,
+        doctorId: doctorId ? Number(doctorId) : undefined,
+        subgroupId: subgroupId ? Number(subgroupId) : undefined,
+        reviewStatus: reviewStatus || undefined,
+      })
+      notify(`✓ Đã tải file ${format.toUpperCase()}`)
+    } catch (error) {
+      notify(extractErrorMessage(error, `Không thể xuất file ${format.toUpperCase()}.`))
+    }
   }
 
   return (
@@ -59,13 +66,13 @@ export default function ExportPanel({ doctors, groups, presetDoctorId }: ExportP
       </div>
 
       <div className="flex gap-2">
-        <button type="button" className="btn btn-primary" onClick={() => handleDownload('json')}>
+        <button type="button" className="btn btn-secondary" onClick={() => handleDownload('json')}>
           <Download size={14} /> JSON
         </button>
-        <button type="button" className="btn" onClick={() => handleDownload('csv')}>
+        <button type="button" className="btn btn-secondary" onClick={() => handleDownload('csv')}>
           <Download size={14} /> CSV
         </button>
-        <button type="button" className="btn" onClick={() => handleDownload('xlsx')}>
+        <button type="button" className="btn btn-secondary" onClick={() => handleDownload('xlsx')}>
           <Download size={14} /> XLSX
         </button>
       </div>

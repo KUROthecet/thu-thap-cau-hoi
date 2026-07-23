@@ -88,7 +88,12 @@ export default function WorkspacePage() {
   }
 
   async function handleExport(format: ExportFormat) {
-    await exportApi.download({ format, doctorId: user?.user_id })
+    try {
+      await exportApi.download({ format, doctorId: user?.user_id })
+      showToast(`✓ Đã tải file ${format.toUpperCase()}`)
+    } catch (error) {
+      showToast(extractErrorMessage(error, `Không thể xuất file ${format.toUpperCase()}.`))
+    }
   }
 
   const overallTotal = groups
@@ -108,13 +113,13 @@ export default function WorkspacePage() {
             <b>{overallTotal}</b>/{overallTarget || 0} câu
           </small>
         </div>
-        <button type="button" className="btn btn-sm" style={{ marginLeft: 12 }} onClick={() => handleExport('json')}>
+        <button type="button" className="btn btn-secondary btn-sm" style={{ marginLeft: 12 }} onClick={() => handleExport('json')}>
           <Download size={13} /> JSON
         </button>
-        <button type="button" className="btn btn-sm" onClick={() => handleExport('csv')}>
+        <button type="button" className="btn btn-secondary btn-sm" onClick={() => handleExport('csv')}>
           <Download size={13} /> CSV
         </button>
-        <button type="button" className="btn btn-sm" onClick={() => handleExport('xlsx')}>
+        <button type="button" className="btn btn-secondary btn-sm" onClick={() => handleExport('xlsx')}>
           <Download size={13} /> XLSX
         </button>
       </TopBar>

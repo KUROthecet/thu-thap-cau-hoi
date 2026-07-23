@@ -99,7 +99,12 @@ export default function AdminPage() {
             </div>
 
             <div className="admin-section" id="export-panel">
-              <ExportPanel doctors={overview.doctors} groups={groups} presetDoctorId={exportDoctorId} />
+              <ExportPanel
+                doctors={overview.doctors}
+                groups={groups}
+                presetDoctorId={exportDoctorId}
+                notify={showToast}
+              />
             </div>
           </>
         )}
