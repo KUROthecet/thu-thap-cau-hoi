@@ -9,7 +9,6 @@ from app.core.security import decode_access_token
 from app.models.user import User
 from app.services.admin_overview_service import AdminOverviewService
 from app.services.auth_service import AuthService
-from app.services.corpus_service import CorpusService
 from app.services.doctor_service import DoctorService
 from app.services.export_service import ExportService
 from app.services.qa_entry_service import QaEntryService
@@ -31,10 +30,6 @@ def get_taxonomy_service(db: DBSession) -> TaxonomyService:
     return TaxonomyService(db)
 
 
-def get_corpus_service(db: DBSession) -> CorpusService:
-    return CorpusService(db)
-
-
 def get_qa_entry_service(db: DBSession) -> QaEntryService:
     return QaEntryService(db)
 
@@ -50,7 +45,6 @@ def get_admin_overview_service(db: DBSession) -> AdminOverviewService:
 AuthServiceDep = Annotated[AuthService, Depends(get_auth_service)]
 DoctorServiceDep = Annotated[DoctorService, Depends(get_doctor_service)]
 TaxonomyServiceDep = Annotated[TaxonomyService, Depends(get_taxonomy_service)]
-CorpusServiceDep = Annotated[CorpusService, Depends(get_corpus_service)]
 QaEntryServiceDep = Annotated[QaEntryService, Depends(get_qa_entry_service)]
 ExportServiceDep = Annotated[ExportService, Depends(get_export_service)]
 AdminOverviewServiceDep = Annotated[AdminOverviewService, Depends(get_admin_overview_service)]

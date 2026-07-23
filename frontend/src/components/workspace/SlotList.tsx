@@ -10,7 +10,6 @@ interface SlotListProps {
 }
 
 function citationLabel(citation: QaEntry['citations'][number]): string {
-  if (citation.chunk) return `${citation.chunk.doc_title} · ${citation.chunk.location_label}`
   return `${citation.manual_doc_name ?? '—'} · ${citation.manual_location ?? '—'}`
 }
 

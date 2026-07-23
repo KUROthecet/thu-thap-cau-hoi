@@ -11,7 +11,7 @@ const ROLE_OPTIONS = [
 ]
 
 const REQUIRED_FIELD_MESSAGE = 'Thông tin này cần được điền'
-const REQUIRED_CITATION_MESSAGE = 'Cần ít nhất 1 trích dẫn bắt buộc: chọn nguồn (từ corpus hoặc nhập thủ công) và ít nhất 1 ý'
+const REQUIRED_CITATION_MESSAGE = 'Cần ít nhất 1 trích dẫn bắt buộc: nhập tên tài liệu + vị trí và ít nhất 1 ý'
 
 interface FormState {
   role: string
@@ -54,7 +54,6 @@ function formFromEntry(entry: QaEntry): FormState {
     manual_doc_name: citation.manual_doc_name,
     manual_location: citation.manual_location,
     points: citation.points.length ? citation.points.map((point) => point.content) : [''],
-    chunkPreview: citation.chunk,
   })
   return {
     role: entry.role,
@@ -73,7 +72,7 @@ function formFromEntry(entry: QaEntry): FormState {
 }
 
 function hasUsableSource(citation: CitationDraft): boolean {
-  return citation.chunk_id !== null || Boolean(citation.manual_doc_name?.trim() && citation.manual_location?.trim())
+  return Boolean(citation.manual_doc_name?.trim() && citation.manual_location?.trim())
 }
 
 function validateForm(form: FormState): FormErrors {

@@ -1,6 +1,5 @@
 import { Plus, X } from 'lucide-react'
-import type { ChunkSummary, CitationDraft } from '../../lib/types'
-import ChunkPicker from './ChunkPicker'
+import type { CitationDraft } from '../../lib/types'
 
 interface CitationBuilderProps {
   kind: 'must_have' | 'optional'
@@ -9,7 +8,7 @@ interface CitationBuilderProps {
 }
 
 function emptyCitation(kind: 'must_have' | 'optional'): CitationDraft {
-  return { kind, chunk_id: null, manual_doc_name: null, manual_location: null, points: [''], chunkPreview: null }
+  return { kind, chunk_id: null, manual_doc_name: '', manual_location: '', points: [''] }
 }
 
 export default function CitationBuilder({ kind, citations, onChange }: CitationBuilderProps) {
@@ -25,18 +24,6 @@ export default function CitationBuilder({ kind, citations, onChange }: CitationB
 
   function removeCitation(index: number) {
     onChange(citations.filter((_, i) => i !== index))
-  }
-
-  function setMode(index: number, mode: 'corpus' | 'manual') {
-    if (mode === 'corpus') {
-      updateCitation(index, { manual_doc_name: null, manual_location: null })
-    } else {
-      updateCitation(index, { chunk_id: null, chunkPreview: null, manual_doc_name: '', manual_location: '' })
-    }
-  }
-
-  function onChunkSelected(index: number, chunk: ChunkSummary) {
-    updateCitation(index, { chunk_id: chunk.chunk_id, chunkPreview: chunk })
   }
 
   function updatePoint(index: number, pointIndex: number, value: string) {
@@ -59,7 +46,6 @@ export default function CitationBuilder({ kind, citations, onChange }: CitationB
   return (
     <div>
       {citations.map((citation, index) => {
-        const mode = citation.manual_doc_name !== null || citation.manual_location !== null ? 'manual' : 'corpus'
         return (
           <div className="citation-block" key={index}>
             <div className="citation-block-head">
@@ -73,44 +59,22 @@ export default function CitationBuilder({ kind, citations, onChange }: CitationB
               </button>
             </div>
 
-            <div className="citation-source-toggle">
-              <button
-                type="button"
-                className={`btn btn-xs ${mode === 'corpus' ? 'btn-secondary' : 'btn-ghost'}`}
-                onClick={() => setMode(index, 'corpus')}
-              >
-                Chọn từ corpus
-              </button>
-              <button
-                type="button"
-                className={`btn btn-xs ${mode === 'manual' ? 'btn-secondary' : 'btn-ghost'}`}
-                onClick={() => setMode(index, 'manual')}
-              >
-                Nhập thủ công
-              </button>
-            </div>
-
-            {mode === 'corpus' ? (
-              <ChunkPicker
-                selectedChunk={citation.chunkPreview}
-                onSelect={(chunk) => onChunkSelected(index, chunk)}
+            <div className="flex gap-2 citation-manual-row" style={{ marginBottom: 10 }}>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="Tên tài liệu / guideline"
+                value={citation.manual_doc_name ?? ''}
+                onChange={(event) => updateCitation(index, { manual_doc_name: event.target.value })}
               />
-            ) : (
-              <div className="flex gap-2 citation-manual-row" style={{ marginBottom: 10 }}>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={citation.manual_doc_name ?? ''}
-                  onChange={(event) => updateCitation(index, { manual_doc_name: event.target.value })}
-                />
-                <input
-                  type="text"
-                  className="form-input"
-                  value={citation.manual_location ?? ''}
-                  onChange={(event) => updateCitation(index, { manual_location: event.target.value })}
-                />
-              </div>
-            )}
+              <input
+                type="text"
+                className="form-input"
+                placeholder="Vị trí (chương / mục / trang)"
+                value={citation.manual_location ?? ''}
+                onChange={(event) => updateCitation(index, { manual_location: event.target.value })}
+              />
+            </div>
 
             <div className="field-label-block">Các ý lấy từ trích dẫn này</div>
             {citation.points.map((point, pointIndex) => (

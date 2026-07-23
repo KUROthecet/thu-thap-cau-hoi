@@ -74,14 +74,6 @@ export interface UpdateSubgroupRequest {
   target_count?: number
 }
 
-export interface ChunkSummary {
-  chunk_id: number
-  doc_id: number
-  doc_title: string
-  location_label: string
-  content: string
-}
-
 export type CitationKind = 'must_have' | 'optional'
 
 export interface CitationInput {
@@ -92,15 +84,12 @@ export interface CitationInput {
   points: string[]
 }
 
-export interface CitationDraft extends CitationInput {
-  chunkPreview: ChunkSummary | null
-}
+export type CitationDraft = CitationInput
 
 export interface CitationOutput {
   citation_id: number
   kind: CitationKind
   chunk_id: number | null
-  chunk: ChunkSummary | null
   manual_doc_name: string | null
   manual_location: string | null
   points: { point_id: number; content: string }[]

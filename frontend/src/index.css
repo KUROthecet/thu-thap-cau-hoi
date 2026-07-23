@@ -571,12 +571,6 @@ a:hover {
 .citation-kind-tag.must-have { background: rgba(207, 34, 46, 0.1); color: var(--danger); }
 .citation-kind-tag.optional { background: var(--accent-light); color: var(--accent); }
 
-.citation-source-toggle { display: flex; gap: 6px; margin-bottom: 8px; }
-.citation-preview {
-  font-size: 12.5px; color: var(--text-secondary); background: var(--bg-surface);
-  border: 1px dashed var(--border); border-radius: var(--r-sm); padding: 9px 11px; margin-bottom: 10px; line-height: 1.5;
-}
-.citation-preview.filled { color: var(--text-primary); border-style: solid; }
 button.citation-preview { cursor: pointer; transition: border-color var(--t), background var(--t); font-family: inherit; }
 button.citation-preview:hover { border-color: var(--accent); background: var(--accent-light); }
 
