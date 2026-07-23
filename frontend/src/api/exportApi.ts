@@ -1,7 +1,9 @@
 import { api } from '../lib/api'
 
+export type ExportFormat = 'csv' | 'json' | 'xlsx'
+
 export interface ExportFilters {
-  format: 'csv' | 'json'
+  format: ExportFormat
   doctorId?: number
   subgroupId?: number
   reviewStatus?: string

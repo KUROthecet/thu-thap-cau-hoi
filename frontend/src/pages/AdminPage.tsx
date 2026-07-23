@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { doctorsApi } from '../api/doctorsApi'
 import AddDoctorForm from '../components/admin/AddDoctorForm'
-import CorpusImportPanel from '../components/admin/CorpusImportPanel'
 import DoctorsTable from '../components/admin/DoctorsTable'
 import ExportPanel from '../components/admin/ExportPanel'
 import SubgroupManager from '../components/admin/SubgroupManager'
@@ -97,10 +96,6 @@ export default function AdminPage() {
 
             <div className="admin-section">
               <SubgroupManager groups={groups} onChanged={() => Promise.all([refresh(), refreshTaxonomy()])} />
-            </div>
-
-            <div className="admin-section">
-              <CorpusImportPanel />
             </div>
 
             <div className="admin-section" id="export-panel">

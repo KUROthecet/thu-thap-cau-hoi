@@ -1,7 +1,7 @@
 import { Download } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { entriesApi } from '../api/entriesApi'
-import { exportApi } from '../api/exportApi'
+import { exportApi, type ExportFormat } from '../api/exportApi'
 import EntryForm, { type EntryFormHandle } from '../components/workspace/EntryForm'
 import GuideBox from '../components/workspace/GuideBox'
 import SlotList from '../components/workspace/SlotList'
@@ -87,7 +87,7 @@ export default function WorkspacePage() {
     await Promise.all([refreshEntries(), refreshTaxonomy()])
   }
 
-  async function handleExport(format: 'csv' | 'json') {
+  async function handleExport(format: ExportFormat) {
     await exportApi.download({ format, doctorId: user?.user_id })
   }
 
@@ -113,6 +113,9 @@ export default function WorkspacePage() {
         </button>
         <button type="button" className="btn btn-sm" onClick={() => handleExport('csv')}>
           <Download size={13} /> CSV
+        </button>
+        <button type="button" className="btn btn-sm" onClick={() => handleExport('xlsx')}>
+          <Download size={13} /> XLSX
         </button>
       </TopBar>
 

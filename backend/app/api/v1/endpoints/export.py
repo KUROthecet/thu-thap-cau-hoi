@@ -6,8 +6,10 @@ from app.services.export_service import ExportFilters
 
 router = APIRouter(prefix="/export", tags=["Export"])
 
+XLSX_MEDIA_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
-@router.get("", summary="Export golden dataset entries as CSV or JSON")
+
+@router.get("", summary="Export golden dataset entries as CSV, JSON or XLSX")
 async def export_entries(
     export_service: ExportServiceDep,
     current_user: ActiveUser,
@@ -25,17 +27,21 @@ async def export_entries(
     entries = await export_service.fetch_entries(filters)
 
     if format == "csv":
-        content = export_service.to_csv_text(entries)
         return Response(
-            content=content,
+            content=export_service.to_csv_text(entries),
             media_type="text/csv; charset=utf-8",
             headers={"Content-Disposition": "attachment; filename=dataset_builder_export.csv"},
         )
     if format == "json":
-        content = export_service.to_json_text(entries, filters)
         return Response(
-            content=content,
+            content=export_service.to_json_text(entries, filters),
             media_type="application/json",
             headers={"Content-Disposition": "attachment; filename=dataset_builder_export.json"},
         )
-    raise BadRequestError("format phải là 'csv' hoặc 'json'.")
+    if format == "xlsx":
+        return Response(
+            content=export_service.to_xlsx_bytes(entries),
+            media_type=XLSX_MEDIA_TYPE,
+            headers={"Content-Disposition": "attachment; filename=dataset_builder_export.xlsx"},
+        )
+    raise BadRequestError("format phải là 'csv', 'json' hoặc 'xlsx'.")

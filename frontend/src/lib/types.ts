@@ -147,19 +147,6 @@ export interface QaEntryCreateResult {
   duplicate_warning: boolean
 }
 
-export interface DocumentOut {
-  doc_id: number
-  title: string
-  publisher: string | null
-  version_label: string | null
-  created_at: string
-}
-
-export interface ImportResult {
-  documents_created: number
-  chunks_created: number
-}
-
 export interface SubgroupMinimapItem {
   subgroup_id: number
   code: string

@@ -4,6 +4,9 @@ import json
 from datetime import datetime, timezone
 from typing import Any
 
+from openpyxl import Workbook
+from openpyxl.styles import Font
+from openpyxl.utils import get_column_letter
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -12,7 +15,7 @@ from app.models.qa_entry import QaEntry
 from app.models.taxonomy import QuestionSubgroup
 from app.models.user import User
 
-CSV_COLUMNS = [
+EXPORT_COLUMNS = [
     "id",
     "doctor_name",
     "doctor_email",
@@ -88,36 +91,59 @@ class ExportService:
     def to_csv_text(self, entries: list[QaEntry]) -> str:
         buffer = io.StringIO()
         buffer.write("﻿")
-        writer = csv.DictWriter(buffer, fieldnames=CSV_COLUMNS)
+        writer = csv.DictWriter(buffer, fieldnames=EXPORT_COLUMNS)
         writer.writeheader()
         for entry in entries:
-            record = self._entry_to_record(entry)
-            writer.writerow(
-                {
-                    "id": record["id"],
-                    "doctor_name": record["doctor_name"],
-                    "doctor_email": record["doctor_email"],
-                    "specialty": record["specialty"],
-                    "group_code": record["group_code"],
-                    "group_name": record["group_name"],
-                    "subgroup_code": record["subgroup_code"],
-                    "subgroup_name": record["subgroup_name"],
-                    "role": record["role"],
-                    "disease_or_topic": record["disease_or_topic"],
-                    "query": record["query"],
-                    "expected_behavior": record["expected_behavior"],
-                    "expert_gold_answer": record["expert_gold_answer"],
-                    "required_key_points": "; ".join(record["required_key_points"]),
-                    "must_have_citations": json.dumps(record["must_have_citations"], ensure_ascii=False),
-                    "optional_citations": json.dumps(record["optional_citations"], ensure_ascii=False),
-                    "safety_notes": record["safety_notes"] or "",
-                    "annotator_name": record["annotator_name"],
-                    "review_status": record["review_status"],
-                    "note_for_expert": record["note_for_expert"] or "",
-                    "created_at": record["created_at"],
-                }
-            )
+            writer.writerow(self._entry_to_row(entry))
         return buffer.getvalue()
+
+    def to_xlsx_bytes(self, entries: list[QaEntry]) -> bytes:
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Golden Dataset"
+
+        sheet.append(EXPORT_COLUMNS)
+        for cell in sheet[1]:
+            cell.font = Font(bold=True)
+
+        for entry in entries:
+            row = self._entry_to_row(entry)
+            sheet.append([row[column] for column in EXPORT_COLUMNS])
+
+        for index, column in enumerate(EXPORT_COLUMNS, start=1):
+            width = 60 if column in ("expert_gold_answer", "must_have_citations", "optional_citations") else 24
+            sheet.column_dimensions[get_column_letter(index)].width = width
+        sheet.freeze_panes = "A2"
+
+        buffer = io.BytesIO()
+        workbook.save(buffer)
+        return buffer.getvalue()
+
+    def _entry_to_row(self, entry: QaEntry) -> dict[str, str]:
+        record = self._entry_to_record(entry)
+        return {
+            "id": record["id"],
+            "doctor_name": record["doctor_name"],
+            "doctor_email": record["doctor_email"],
+            "specialty": record["specialty"] or "",
+            "group_code": record["group_code"],
+            "group_name": record["group_name"],
+            "subgroup_code": record["subgroup_code"],
+            "subgroup_name": record["subgroup_name"],
+            "role": record["role"],
+            "disease_or_topic": record["disease_or_topic"],
+            "query": record["query"],
+            "expected_behavior": record["expected_behavior"],
+            "expert_gold_answer": record["expert_gold_answer"],
+            "required_key_points": "; ".join(record["required_key_points"]),
+            "must_have_citations": json.dumps(record["must_have_citations"], ensure_ascii=False),
+            "optional_citations": json.dumps(record["optional_citations"], ensure_ascii=False),
+            "safety_notes": record["safety_notes"] or "",
+            "annotator_name": record["annotator_name"],
+            "review_status": record["review_status"],
+            "note_for_expert": record["note_for_expert"] or "",
+            "created_at": record["created_at"],
+        }
 
     @staticmethod
     def _entry_to_record(entry: QaEntry) -> dict[str, Any]:

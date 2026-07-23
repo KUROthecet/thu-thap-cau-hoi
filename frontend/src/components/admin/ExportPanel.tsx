@@ -1,6 +1,6 @@
 import { Download } from 'lucide-react'
 import { useState } from 'react'
-import { exportApi } from '../../api/exportApi'
+import { exportApi, type ExportFormat } from '../../api/exportApi'
 import type { DoctorProgress, QuestionGroup } from '../../lib/types'
 
 interface ExportPanelProps {
@@ -14,7 +14,7 @@ export default function ExportPanel({ doctors, groups, presetDoctorId }: ExportP
   const [subgroupId, setSubgroupId] = useState<string>('')
   const [reviewStatus, setReviewStatus] = useState<string>('')
 
-  async function handleDownload(format: 'csv' | 'json') {
+  async function handleDownload(format: ExportFormat) {
     await exportApi.download({
       format,
       doctorId: doctorId ? Number(doctorId) : undefined,
@@ -64,6 +64,9 @@ export default function ExportPanel({ doctors, groups, presetDoctorId }: ExportP
         </button>
         <button type="button" className="btn" onClick={() => handleDownload('csv')}>
           <Download size={14} /> CSV
+        </button>
+        <button type="button" className="btn" onClick={() => handleDownload('xlsx')}>
+          <Download size={14} /> XLSX
         </button>
       </div>
     </div>

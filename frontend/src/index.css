@@ -666,18 +666,6 @@ button.citation-preview:hover { border-color: var(--accent); background: var(--a
 .filter-bar .form-select,
 .filter-bar .form-input { max-width: 240px; }
 
-.upload-dropzone {
-  border: 1px dashed var(--border);
-  border-radius: var(--r-md);
-  padding: 24px;
-  text-align: center;
-  background: var(--bg-input);
-  cursor: pointer;
-  transition: border-color var(--t);
-}
-.upload-dropzone:hover { border-color: var(--accent); }
-.upload-dropzone input[type='file'] { display: none; }
-
 .hidden { display: none !important; }
 
 /* ── Mobile / Responsive ─────────────────────────────────────── */
