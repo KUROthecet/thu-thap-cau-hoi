@@ -161,13 +161,13 @@ a:hover {
 .btn-primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
 
 .btn-secondary { background: transparent; color: var(--text-primary); border-color: var(--border); }
-.btn-secondary:hover:not(:disabled) { background: var(--bg-card); }
+.btn-secondary:hover:not(:disabled) { background: var(--bg); border-color: var(--text-muted); }
 
 .btn-danger { background: transparent; color: var(--danger); border-color: var(--danger); }
 .btn-danger:hover:not(:disabled) { background: rgba(207, 34, 46, 0.1); }
 
 .btn-ghost { background: transparent; color: var(--text-secondary); border-color: transparent; padding: 4px 8px; }
-.btn-ghost:hover:not(:disabled) { background: var(--bg-surface); color: var(--text-primary); }
+.btn-ghost:hover:not(:disabled) { background: var(--bg); color: var(--text-primary); }
 
 .btn-sm { padding: 6px 12px; font-size: 13px; }
 .btn-xs { padding: 4px 10px; font-size: 12px; border-radius: 4px; }
