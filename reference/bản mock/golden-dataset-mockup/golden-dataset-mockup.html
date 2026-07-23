@@ -1,0 +1,990 @@
+<title>Golden Dataset Builder — Mockup</title>
+<style>
+  :root {
+    --bg: #f7f9fa;
+    --surface: #ffffff;
+    --surface-2: #f1f5f6;
+    --border: #e0e7ea;
+    --border-strong: #cbd6da;
+    --ink: #17242b;
+    --muted: #5c6b72;
+    --faint: #839099;
+    --accent: #0e7c86;
+    --accent-ink: #0a5b63;
+    --accent-soft: #e2f2f3;
+    --done: #16a34a;
+    --done-soft: #e4f4ea;
+    --partial: #d97706;
+    --partial-soft: #fbeede;
+    --empty: #9aa7ad;
+    --shadow: 0 1px 2px rgba(23,36,43,.06), 0 4px 16px rgba(23,36,43,.05);
+    --radius: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1417;
+      --surface: #161f24;
+      --surface-2: #1c272d;
+      --border: #263238;
+      --border-strong: #33454d;
+      --ink: #e6edf0;
+      --muted: #9aabb2;
+      --faint: #6e8088;
+      --accent: #2bb8c4;
+      --accent-ink: #7fe0e8;
+      --accent-soft: #123037;
+      --done: #34c07a;
+      --done-soft: #16301f;
+      --partial: #e0a54a;
+      --partial-soft: #33260f;
+      --empty: #56666d;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1417; --surface: #161f24; --surface-2: #1c272d; --border: #263238;
+    --border-strong: #33454d; --ink: #e6edf0; --muted: #9aabb2; --faint: #6e8088;
+    --accent: #2bb8c4; --accent-ink: #7fe0e8; --accent-soft: #123037;
+    --done: #34c07a; --done-soft: #16301f; --partial: #e0a54a; --partial-soft: #33260f;
+    --empty: #56666d; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.35);
+  }
+  :root[data-theme="light"] {
+    --bg: #f7f9fa; --surface: #ffffff; --surface-2: #f1f5f6; --border: #e0e7ea;
+    --border-strong: #cbd6da; --ink: #17242b; --muted: #5c6b72; --faint: #839099;
+    --accent: #0e7c86; --accent-ink: #0a5b63; --accent-soft: #e2f2f3;
+    --done: #16a34a; --done-soft: #e4f4ea; --partial: #d97706; --partial-soft: #fbeede;
+    --empty: #9aa7ad; --shadow: 0 1px 2px rgba(23,36,43,.06), 0 4px 16px rgba(23,36,43,.05);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { margin: 0; text-wrap: balance; }
+  button { font-family: inherit; cursor: pointer; }
+  .tnum { font-variant-numeric: tabular-nums; }
+
+  /* ---------- top bar ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    display: flex; align-items: center; gap: 16px;
+    padding: 12px 22px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand { display: flex; align-items: center; gap: 11px; }
+  .mark {
+    width: 32px; height: 32px; border-radius: 9px;
+    background: linear-gradient(150deg, var(--accent), var(--accent-ink));
+    display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 16px;
+    flex: none;
+  }
+  .brand-txt b { font-size: 15px; letter-spacing: -.01em; display: block; line-height: 1.2; }
+  .brand-txt span { font-size: 11.5px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+  .spacer { flex: 1; }
+
+  .who {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 12px 5px 6px; border: 1px solid var(--border); border-radius: 999px;
+    background: var(--surface-2); font-size: 13.5px;
+  }
+  .who .av { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-ink); display: grid; place-items: center; font-weight: 700; font-size: 12px; flex: none; }
+  .who small { color: var(--muted); }
+  .who-txt { display: flex; flex-direction: column; line-height: 1.15; }
+  .who-txt b { font-size: 13px; }
+  .who-txt small { font-size: 11px; color: var(--muted); }
+
+  .btn {
+    border: 1px solid var(--border-strong); background: var(--surface); color: var(--ink);
+    padding: 8px 14px; border-radius: 9px; font-size: 13.5px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 7px; transition: .12s;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent-ink); }
+  .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-primary:hover { filter: brightness(1.06); color: #fff; }
+  .btn-ghost { border-color: transparent; background: transparent; color: var(--muted); padding: 8px 10px; }
+  .btn-ghost:hover { background: var(--surface-2); color: var(--ink); }
+
+  /* overall meter in topbar */
+  .overall { display: flex; align-items: center; gap: 10px; }
+  .overall .bar { width: 130px; height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; border: 1px solid var(--border); }
+  .overall .fill { height: 100%; background: var(--accent); border-radius: 99px; }
+  .overall small { color: var(--muted); font-size: 12px; }
+  .overall b { font-size: 13px; }
+
+  /* ---------- layout ---------- */
+  .wrap { display: grid; grid-template-columns: 340px 1fr; gap: 0; min-height: calc(100vh - 57px); }
+  @media (max-width: 860px) { .wrap { grid-template-columns: 1fr; } .side { border-right: none; border-bottom: 1px solid var(--border); } }
+
+  .side {
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    padding: 16px 12px 40px;
+    overflow-y: auto;
+  }
+  .side-head { display: flex; align-items: baseline; justify-content: space-between; padding: 4px 10px 10px; }
+  .side-head h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+  .side-head .cnt { font-size: 12px; color: var(--faint); }
+
+  .legend { display: flex; gap: 12px; padding: 2px 10px 12px; font-size: 11.5px; color: var(--muted); }
+  .legend i { width: 9px; height: 9px; border-radius: 3px; display: inline-block; margin-right: 5px; vertical-align: middle; }
+
+  .type {
+    width: 100%; text-align: left; border: 1px solid transparent; background: transparent;
+    padding: 9px 10px; border-radius: 9px; display: flex; align-items: center; gap: 10px;
+    color: var(--ink); margin-bottom: 1px;
+  }
+  .type:hover { background: var(--surface-2); }
+  .type.active { background: var(--accent-soft); border-color: var(--accent); }
+  .type .num { font-size: 11px; color: var(--faint); width: 20px; flex: none; text-align: right; }
+  .type .nm { flex: 1; font-size: 13.5px; line-height: 1.3; }
+  .type.active .nm { font-weight: 600; }
+  .badge {
+    flex: none; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+    background: var(--surface-2); color: var(--empty); border: 1px solid var(--border);
+  }
+  .badge.done { background: var(--done-soft); color: var(--done); border-color: transparent; }
+  .badge.partial { background: var(--partial-soft); color: var(--partial); border-color: transparent; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; background: var(--empty); }
+  .dot.done { background: var(--done); }
+  .dot.partial { background: var(--partial); }
+
+  /* ---------- main ---------- */
+  .main { padding: 26px 30px 60px; overflow-y: auto; max-width: 920px; }
+  .crumb { font-size: 12px; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+  .main-head { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 4px; }
+  .main-head h1 { font-size: 23px; letter-spacing: -.02em; }
+  .type-desc { color: var(--muted); font-size: 14px; margin: 6px 0 22px; max-width: 62ch; }
+
+  /* type guide card */
+  .guide {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--accent-soft); border: 1px solid var(--border); border-left: 3px solid var(--accent);
+    border-radius: 10px; padding: 13px 15px; margin: 8px 0 22px; max-width: 66ch;
+  }
+  .guide-ico { font-size: 16px; line-height: 1.4; flex: none; }
+  .guide-txt { flex: 1; }
+  .guide-desc { font-size: 13.5px; color: var(--ink); line-height: 1.55; }
+  .guide-eg { margin-top: 9px; display: flex; gap: 9px; align-items: baseline; flex-wrap: wrap; }
+  .eg-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; color: var(--accent-ink); background: var(--surface); border: 1px solid var(--border); padding: 2px 7px; border-radius: 5px; flex: none; }
+  .guide-eg i { font-size: 13px; color: var(--ink); font-style: italic; }
+  .eg-use { border: none; background: transparent; color: var(--accent-ink); font-size: 12px; font-weight: 600; padding: 0; text-decoration: underline; white-space: nowrap; }
+  .eg-use:hover { opacity: .75; }
+  .pill {
+    flex: none; font-size: 12.5px; font-weight: 700; padding: 5px 12px; border-radius: 999px;
+    background: var(--partial-soft); color: var(--partial); margin-top: 3px;
+  }
+  .pill.done { background: var(--done-soft); color: var(--done); }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 20px; margin-bottom: 20px;
+  }
+  .card > h3 { font-size: 14px; margin-bottom: 2px; display: flex; align-items: center; gap: 8px; }
+  .card .sub { color: var(--muted); font-size: 12.5px; margin-bottom: 16px; }
+
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .field label .req { color: var(--accent-ink); }
+  .field label .hint { font-weight: 400; color: var(--faint); font-size: 12px; }
+  .field .tag { font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 7px; border-radius: 5px; background: var(--accent-soft); color: var(--accent-ink); }
+  textarea, input[type=text] {
+    width: 100%; border: 1px solid var(--border-strong); border-radius: 9px; background: var(--bg);
+    color: var(--ink); padding: 11px 12px; font-family: inherit; font-size: 14px; line-height: 1.5;
+    resize: vertical; transition: .12s;
+  }
+  textarea:focus, input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  textarea::placeholder, input::placeholder { color: var(--faint); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 640px){ .row2 { grid-template-columns: 1fr; } }
+
+  /* citations builder */
+  .cites { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+  .cite { border: 1px solid var(--border-strong); border-radius: 10px; background: var(--surface-2); padding: 12px; }
+  .cite-head { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+  .cite-head .cidx { width: 22px; height: 22px; border-radius: 6px; background: var(--accent-soft); color: var(--accent-ink); display: grid; place-items: center; font-size: 11px; font-weight: 700; flex: none; }
+  .ci-chunk { flex: 1; min-width: 0; border: 1px solid var(--border-strong); border-radius: 9px; background: var(--surface); color: var(--ink); padding: 9px 11px; font-family: inherit; font-size: 13.5px; }
+  .ci-chunk:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .chunk-prev { font-size: 12.5px; color: var(--faint); background: var(--surface); border: 1px dashed var(--border-strong); border-radius: 8px; padding: 9px 11px; margin: 0 0 10px 32px; line-height: 1.5; }
+  .chunk-prev.on { color: var(--ink); border-style: solid; }
+  .cp-tag { font-size: 10px; text-transform: uppercase; letter-spacing: .04em; font-weight: 700; color: var(--accent-ink); margin-right: 7px; }
+  .cite .rm { border: none; background: transparent; color: var(--faint); font-size: 13px; padding: 5px 7px; border-radius: 6px; flex: none; }
+  .cite .rm:hover { background: var(--bg); color: var(--partial); }
+  .points { display: flex; flex-direction: column; gap: 6px; padding-left: 32px; margin-bottom: 8px; }
+  .point { display: flex; gap: 8px; align-items: center; }
+  .point .bul { color: var(--accent); font-weight: 700; flex: none; }
+  .point input { background: var(--surface); }
+  .add-cite, .add-point {
+    align-self: flex-start; border: 1px dashed var(--border-strong); background: transparent;
+    color: var(--accent-ink); font-size: 12.5px; font-weight: 600; padding: 6px 11px; border-radius: 8px;
+  }
+  .add-point { margin-left: 32px; }
+  .add-cite:hover, .add-point:hover { border-color: var(--accent); background: var(--accent-soft); }
+
+  /* citation view in slots */
+  .cite-view { margin-bottom: 9px; }
+  .cite-view:last-child { margin-bottom: 0; }
+  .cite-view .loc { font-size: 12.5px; font-weight: 700; color: var(--accent-ink); font-family: ui-monospace, Menlo, monospace; }
+  .cite-view .cid { font-size: 10.5px; font-weight: 600; color: var(--faint); }
+  .cite-view ul { margin: 3px 0 0; padding-left: 18px; }
+  .cite-view li { font-size: 13px; margin-bottom: 2px; }
+
+  .form-actions { display: flex; align-items: center; gap: 10px; margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border); }
+  .form-actions .spacer2 { flex: 1; }
+  .save-note { font-size: 12px; color: var(--faint); }
+
+  /* slots */
+  .slots-head { display: flex; align-items: center; justify-content: space-between; margin: 4px 0 12px; }
+  .slots-head h3 { font-size: 14px; }
+  .slot {
+    border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; overflow: hidden; background: var(--surface);
+  }
+  .slot-top { display: flex; align-items: center; gap: 12px; padding: 13px 15px; }
+  .slot.filled .slot-top { cursor: pointer; }
+  .slot .ix { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; font-size: 12px; font-weight: 700; flex: none; }
+  .slot.filled .ix { background: var(--done-soft); color: var(--done); }
+  .slot.empty .ix { background: var(--surface-2); color: var(--faint); border: 1px dashed var(--border-strong); }
+  .slot .q { flex: 1; font-size: 13.5px; }
+  .slot.empty .q { color: var(--faint); font-style: italic; }
+  .slot .chev { color: var(--faint); font-size: 12px; }
+  .slot-body { padding: 0 15px 15px 49px; display: none; }
+  .slot.open .slot-body { display: block; }
+  .slot-body .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 12px 0 4px; font-weight: 700; }
+  .slot-body .val { font-size: 13.5px; color: var(--ink); background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 9px 11px; }
+  .slot-body .val.src { color: var(--accent-ink); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
+
+  /* ---------- doctor picker (screen 1) ---------- */
+  .picker-scr { min-height: 100vh; display: grid; place-items: center; padding: 40px 20px; }
+  .picker { width: 100%; max-width: 560px; }
+  .picker .mark-lg { width: 52px; height: 52px; border-radius: 14px; font-size: 24px; margin: 0 auto 18px; }
+  .picker h1 { text-align: center; font-size: 26px; letter-spacing: -.02em; }
+  .picker .lead { text-align: center; color: var(--muted); margin: 8px auto 28px; max-width: 44ch; }
+  .doc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 560px){ .doc-grid { grid-template-columns: 1fr; } }
+  .doc {
+    display: flex; align-items: center; gap: 12px; text-align: left;
+    border: 1px solid var(--border); background: var(--surface); border-radius: 12px; padding: 14px;
+    box-shadow: var(--shadow); transition: .14s;
+  }
+  .doc:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .doc .av { width: 40px; height: 40px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-ink); display: grid; place-items: center; font-weight: 700; flex: none; }
+  .doc b { font-size: 14.5px; display: block; }
+  .doc small { color: var(--muted); font-size: 12px; }
+  .doc .prog { margin-left: auto; text-align: right; }
+  .doc .prog b { font-size: 13px; color: var(--accent-ink); }
+  .doc .prog small { font-size: 11px; }
+  .picker .admin-note { margin-top: 22px; font-size: 12.5px; color: var(--faint); text-align: center; }
+
+  /* ---------- admin screen ---------- */
+  .admin-main { padding: 26px 30px 60px; max-width: 1120px; margin: 0 auto; }
+  .admin-h1 { font-size: 23px; letter-spacing: -.02em; }
+  .admin-lead { color: var(--muted); font-size: 14px; margin: 6px 0 22px; max-width: 72ch; }
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+  @media (max-width: 720px){ .tiles { grid-template-columns: repeat(2, 1fr); } }
+  .tile { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 15px 18px; box-shadow: var(--shadow); }
+  .tile .k { font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+  .tile .v { font-size: 27px; font-weight: 700; letter-spacing: -.02em; margin-top: 3px; }
+  .tile .v small { font-size: 14px; color: var(--muted); font-weight: 600; }
+  .tile.accent { border-color: var(--accent); }
+  .tile.accent .v { color: var(--accent-ink); }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
+  .dtable { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 860px; }
+  .dtable th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; padding: 12px 15px; border-bottom: 1px solid var(--border); background: var(--surface-2); white-space: nowrap; }
+  .dtable th.ctr { text-align: center; }
+  .dtable td { padding: 12px 15px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .dtable tr:last-child td { border-bottom: none; }
+  .dtable tbody tr:hover td { background: var(--surface-2); }
+  .dtable td.ctr { text-align: center; }
+  .dname { display: flex; align-items: center; gap: 10px; }
+  .dname .av { width: 32px; height: 32px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-ink); display: grid; place-items: center; font-weight: 700; font-size: 12px; flex: none; }
+  .dname b { font-size: 13.5px; }
+  .dname small { color: var(--faint); font-size: 11px; display: block; font-family: ui-monospace, Menlo, monospace; }
+  .chip { display: inline-block; font-size: 12px; font-weight: 600; padding: 4px 11px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-ink); white-space: nowrap; }
+  .pbar { display: flex; align-items: center; gap: 9px; min-width: 150px; }
+  .pbar .bar { flex: 1; height: 7px; border-radius: 99px; background: var(--surface-2); border: 1px solid var(--border); overflow: hidden; }
+  .pbar .fill { height: 100%; background: var(--accent); }
+  .pbar small { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .minimap { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; width: 156px; }
+  .minimap i { aspect-ratio: 1; border-radius: 2px; background: var(--empty); opacity: .35; }
+  .minimap i.partial { background: var(--partial); opacity: 1; }
+  .minimap i.done { background: var(--done); opacity: 1; }
+  .stpill { font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+  .stpill.done { background: var(--done-soft); color: var(--done); }
+  .stpill.prog { background: var(--partial-soft); color: var(--partial); }
+  .stpill.new { background: var(--surface-2); color: var(--muted); }
+  .tlink { border: none; background: transparent; color: var(--accent-ink); font-weight: 600; font-size: 12.5px; cursor: pointer; white-space: nowrap; }
+  .tlink:hover { text-decoration: underline; }
+  .admin-foot { font-size: 12.5px; color: var(--faint); margin-top: 16px; }
+
+  .addbox { background: var(--surface); border: 1px solid var(--accent); border-radius: 12px; padding: 16px 18px; margin-bottom: 18px; box-shadow: var(--shadow); }
+  .addbox h3 { font-size: 14px; margin-bottom: 12px; }
+  .addrow { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+  .addrow .field { margin-bottom: 0; flex: 1; min-width: 190px; }
+  .addrow select { width: 100%; border: 1px solid var(--border-strong); border-radius: 9px; background: var(--bg); color: var(--ink); padding: 11px 12px; font-family: inherit; font-size: 14px; }
+  .addrow select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+  .hidden { display: none !important; }
+
+  /* ---------- spec notes drawer ---------- */
+  .drawer-bg { position: fixed; inset: 0; background: rgba(10,20,24,.42); z-index: 40; opacity: 0; pointer-events: none; transition: .18s; }
+  .drawer-bg.on { opacity: 1; pointer-events: auto; }
+  .drawer {
+    position: fixed; top: 0; right: 0; height: 100%; width: 440px; max-width: 90vw; z-index: 50;
+    background: var(--surface); border-left: 1px solid var(--border); box-shadow: -8px 0 30px rgba(0,0,0,.18);
+    transform: translateX(100%); transition: .22s cubic-bezier(.4,0,.2,1); overflow-y: auto;
+  }
+  .drawer.on { transform: translateX(0); }
+  .drawer-head { position: sticky; top: 0; background: var(--surface); padding: 18px 20px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .drawer-head h2 { font-size: 15px; flex: 1; }
+  .drawer-head .tag { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; background: var(--partial-soft); color: var(--partial); }
+  .drawer-body { padding: 18px 20px 50px; }
+  .drawer-body h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--accent-ink); margin: 22px 0 8px; }
+  .drawer-body h3:first-child { margin-top: 0; }
+  .drawer-body p { font-size: 13.5px; color: var(--muted); margin: 0 0 10px; }
+  .drawer-body ul { margin: 0 0 10px; padding-left: 18px; }
+  .drawer-body li { font-size: 13.5px; margin-bottom: 6px; color: var(--ink); }
+  .drawer-body code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; background: var(--surface-2); padding: 1px 5px; border-radius: 4px; color: var(--accent-ink); }
+  .spec-schema { background: var(--surface-2); border: 1px solid var(--border); border-radius: 9px; padding: 13px 14px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; line-height: 1.7; overflow-x: auto; white-space: pre; color: var(--ink); }
+
+  /* export modal */
+  .modal-bg { position: fixed; inset: 0; background: rgba(10,20,24,.5); z-index: 60; display: none; place-items: center; padding: 20px; }
+  .modal-bg.on { display: grid; }
+  .modal { background: var(--surface); border-radius: 14px; width: 100%; max-width: 560px; box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
+  .modal-head { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .modal-head h2 { font-size: 16px; flex: 1; }
+  .modal-body { padding: 18px 20px; }
+  .modal-body p { color: var(--muted); font-size: 13.5px; margin: 0 0 14px; }
+  .export-opts { display: flex; gap: 10px; margin-bottom: 16px; }
+  .export-opts .btn { flex: 1; justify-content: center; }
+  .code-prev { background: #0e1417; color: #cfe; border-radius: 9px; padding: 14px; font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; line-height: 1.6; overflow-x: auto; white-space: pre; max-height: 220px; }
+  :root[data-theme="light"] .code-prev { background: #12232a; }
+
+  /* toast */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--bg); padding: 11px 20px; border-radius: 10px; font-size: 13.5px; font-weight: 600; opacity: 0; pointer-events: none; transition: .2s; z-index: 80; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+  .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .mock-flag { position: fixed; bottom: 14px; left: 14px; z-index: 30; font-size: 11px; color: var(--faint); background: var(--surface); border: 1px solid var(--border); padding: 5px 10px; border-radius: 999px; }
+</style>
+
+<!-- ========================= SCREEN 1: DOCTOR PICKER ========================= -->
+<div id="screen-pick" class="picker-scr">
+  <div class="picker">
+    <div class="mark mark-lg">G</div>
+    <h1>Golden Dataset Builder</h1>
+    <p class="lead">Công cụ để chuyên gia y tế tạo bộ dữ liệu chuẩn (golden dataset) cho chatbot RAG — dự án <b>AI4Health</b>. Chọn tên của bạn để bắt đầu.</p>
+    <div class="doc-grid" id="docGrid"></div>
+    <p class="admin-note">🔒 Danh sách bác sĩ do <b>Admin</b> tạo sẵn. Mỗi người phụ trách <b>1 chuyên khoa</b> và nhập đủ <b>5 câu × 24 loại = 120 câu</b>.</p>
+    <button class="btn" style="display:flex;margin:14px auto 0" onclick="openAdmin()">⚙ Trang quản trị (Admin)</button>
+  </div>
+</div>
+
+<!-- ========================= SCREEN 2: WORKSPACE ========================= -->
+<div id="screen-work" class="hidden">
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark">G</div>
+      <div class="brand-txt"><b>Golden Dataset Builder</b><span>AI4Health · RAG y tế</span></div>
+    </div>
+    <div class="spacer"></div>
+    <div class="overall">
+      <div class="bar"><div class="fill" id="ovFill" style="width:0%"></div></div>
+      <small class="tnum"><b id="ovNum">0</b>/120 câu</small>
+    </div>
+    <button class="btn btn-ghost" onclick="toggleSpec(true)" title="Ghi chú cho developer">📋 Ghi chú cho dev</button>
+    <button class="btn" onclick="openExport()">⬇ Xuất dữ liệu</button>
+    <div class="who">
+      <span class="av" id="whoAv">B</span>
+      <span class="who-txt"><b id="whoName">Bác sĩ</b><small id="whoSpec">Chuyên khoa</small></span>
+    </div>
+    <button class="btn btn-ghost" onclick="openAdmin()" title="Trang Admin">⚙</button>
+    <button class="btn btn-ghost" onclick="backToPick()" title="Đổi người dùng">↩</button>
+  </div>
+
+  <div class="wrap">
+    <aside class="side">
+      <div class="side-head"><h2>24 loại câu hỏi</h2><span class="cnt" id="typeCnt">0/24 loại xong</span></div>
+      <div class="legend">
+        <span><i style="background:var(--done)"></i>Đủ 5/5</span>
+        <span><i style="background:var(--partial)"></i>Đang nhập</span>
+        <span><i style="background:var(--empty)"></i>Chưa có</span>
+      </div>
+      <div id="typeList"></div>
+    </aside>
+
+    <main class="main">
+      <div class="crumb" id="crumb">Loại 1 / 24</div>
+      <div class="main-head">
+        <h1 id="typeName">—</h1>
+        <span class="pill" id="typePill">0/5</span>
+      </div>
+      <div class="guide">
+        <span class="guide-ico">💡</span>
+        <div class="guide-txt">
+          <div class="guide-desc" id="typeDesc"></div>
+          <div class="guide-eg">
+            <span class="eg-lbl">Câu hỏi ví dụ</span>
+            <i id="typeEg"></i>
+            <button class="eg-use" type="button" onclick="useExample()">Dùng mẫu này ↵</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- entry form -->
+      <div class="card">
+        <h3>➕ Thêm câu hỏi mới <span class="tag" style="background:var(--partial-soft);color:var(--partial)">Ô nhập của chuyên gia</span></h3>
+        <p class="sub">Mỗi bản ghi gồm 3 phần: câu hỏi, thông tin cần truy vấn đúng từ guideline, và câu trả lời chuẩn.</p>
+
+        <div class="field">
+          <label>1 · Câu hỏi <span class="req">*</span> <span class="hint">— câu hỏi mẫu của bệnh nhân / lâm sàng</span></label>
+          <textarea id="fQ" rows="2" placeholder="VD: Bệnh nhân tăng huyết áp độ 2 kèm đái tháo đường thì thuốc hạ áp đầu tay nên chọn nhóm nào?"></textarea>
+        </div>
+
+        <div class="field">
+          <label>2 · Thông tin cần truy vấn từ guideline <span class="req">*</span> <span class="tag">ground-truth retrieval</span></label>
+          <p class="sub" style="margin:-2px 0 10px">Mỗi <b>trích dẫn</b> = <b>chọn đúng đoạn guideline</b> (đã có sẵn ID) + liệt kê <b>các ý</b> cần lấy từ đoạn đó. Thêm được nhiều trích dẫn cho 1 câu.</p>
+          <div class="cites" id="citeList"></div>
+          <button class="add-cite" type="button" onclick="addCite()">+ Thêm trích dẫn</button>
+        </div>
+
+        <div class="field">
+          <label>3 · Câu trả lời mong muốn <span class="req">*</span> <span class="tag">ground-truth answer</span></label>
+          <textarea id="fA" rows="3" placeholder="Câu trả lời chuẩn, đúng theo guideline, dùng làm mốc để đánh giá câu trả lời của chatbot."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="saveEntry()">✓ Lưu câu hỏi</button>
+          <button class="btn" onclick="clearForm()">Xóa nhập</button>
+          <div class="spacer2"></div>
+          <span class="save-note">Còn thiếu <b id="remain" class="tnum">5</b> câu cho loại này</span>
+        </div>
+      </div>
+
+      <!-- 5 slots -->
+      <div class="slots-head">
+        <h3>Các câu đã nhập cho loại này</h3>
+      </div>
+      <div id="slotList"></div>
+    </main>
+  </div>
+</div>
+
+<!-- ========================= SCREEN 3: ADMIN ========================= -->
+<div id="screen-admin" class="hidden">
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark">G</div>
+      <div class="brand-txt"><b>Bảng điều khiển Admin</b><span>AI4Health · Golden Dataset</span></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn" onclick="toggleAddDoc()">＋ Thêm bác sĩ</button>
+    <button class="btn" onclick="flash('Đã xuất toàn bộ dataset của mọi bác sĩ (mockup)')">⬇ Xuất toàn bộ</button>
+    <button class="btn btn-ghost" onclick="adminToPick()" title="Quay lại">↩</button>
+  </div>
+
+  <div class="admin-main">
+    <div class="crumb">Quản trị</div>
+    <h1 class="admin-h1">Bác sĩ &amp; tiến độ</h1>
+    <p class="admin-lead">Mỗi bác sĩ phụ trách <b>một chuyên khoa</b> và nhập đủ 5 câu × 24 loại = 120 câu. Theo dõi tiến độ từng người và của cả nhóm tại đây.</p>
+
+    <div class="tiles" id="tiles"></div>
+
+    <div class="addbox hidden" id="addbox">
+      <h3>Thêm bác sĩ mới</h3>
+      <div class="addrow">
+        <div class="field"><label>Họ tên bác sĩ</label><input type="text" id="ndName" placeholder="VD: BS. Vũ Thị Mai"></div>
+        <div class="field"><label>Chuyên khoa phụ trách</label><select id="ndSpec"></select></div>
+        <button class="btn btn-primary" onclick="addDoctor()">✓ Thêm</button>
+        <button class="btn" onclick="toggleAddDoc()">Hủy</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="dtable">
+        <thead><tr>
+          <th>Bác sĩ</th>
+          <th>Chuyên khoa</th>
+          <th>Tiến độ</th>
+          <th class="ctr">Loại đủ 5/5</th>
+          <th>Bản đồ 24 loại</th>
+          <th>Trạng thái</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="dbody"></tbody>
+      </table>
+    </div>
+    <p class="admin-foot">🗂️ 24 loại câu hỏi cũng do Admin cấu hình (thêm/sửa/xóa loại) — phần này để Tuấn dựng ở bản thật.</p>
+  </div>
+</div>
+
+<!-- spec drawer -->
+<div class="drawer-bg" id="drawerBg" onclick="toggleSpec(false)"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <span class="tag">Cho Tuấn</span>
+    <h2>Ghi chú kỹ thuật</h2>
+    <button class="btn btn-ghost" onclick="toggleSpec(false)">✕</button>
+  </div>
+  <div class="drawer-body">
+    <h3>Mục tiêu</h3>
+    <p>Thu thập golden dataset để đánh giá 2 tầng của pipeline RAG: <b>retrieval</b> (lấy đúng đoạn guideline) và <b>generation</b> (trả lời đúng).</p>
+
+    <h3>Ràng buộc nghiệp vụ</h3>
+    <ul>
+      <li><b>24 loại câu hỏi</b> cố định (Admin cấu hình được).</li>
+      <li>Mỗi bác sĩ nhập <b>đúng 5 câu / loại</b> → 120 câu/người.</li>
+      <li>Danh sách bác sĩ do <b>Admin tạo sẵn</b> (không tự đăng ký).</li>
+      <li><b>Mỗi bác sĩ phụ trách 1 chuyên khoa</b> (gắn khi tạo tài khoản).</li>
+      <li>Tiến độ tính riêng theo từng bác sĩ.</li>
+      <li>Khóa/đánh dấu khi 1 loại đã đủ 5/5.</li>
+    </ul>
+
+    <h3>Schema mỗi bản ghi</h3>
+    <div class="spec-schema">{
+  "id": "uuid",
+  "doctor_id": "bs_02",
+  "specialty": "Nội tiết",   // chuyên khoa của bác sĩ
+  "type_id": 7,              // 1 trong 24 loại
+  "question": "string",      // bắt buộc
+  "retrieval_gt": [          // 1..n trích dẫn
+    {
+      "source": {
+        "doc": "HD THA – BYT 2022",
+        "loc": "Chương 1, Điều A"
+      },
+      "points": [            // các ý lấy từ chỗ này
+        "đau đầu phải chữa abc",
+        "..."
+      ]
+    }
+  ],
+  "answer_gt": "string",     // câu trả lời chuẩn
+  "created_at": "iso8601",
+  "status": "final"
+}</div>
+
+    <h3>Màn hình cần có</h3>
+    <ul>
+      <li><b>Chọn bác sĩ</b> (màn đầu) — pick từ danh sách Admin.</li>
+      <li><b>Workspace</b> — sidebar 24 loại + form nhập + 5 slot.</li>
+      <li><b>Admin</b> — quản lý danh sách bác sĩ, 24 loại, xem tiến độ tổng, export toàn bộ.</li>
+    </ul>
+
+    <h3>Xuất dữ liệu</h3>
+    <p>Cho phép export <code>JSON</code> và <code>CSV</code>; lọc theo bác sĩ / theo loại; và bản gộp toàn bộ cho khâu đánh giá.</p>
+
+    <h3>Neo trích dẫn về chunk</h3>
+    <p>Guideline được <b>chunk hóa & gán ID</b> trước (bảng <code>chunks</code>). Bác sĩ <b>chọn đúng đoạn</b> khi trích → lưu <code>chunk_ids</code>. Nhờ đó eval retrieval (recall@k, MRR…) chạy tự động khớp với chunk retriever trả về.</p>
+
+    <h3>Gợi ý validate</h3>
+    <ul>
+      <li>3 trường bắt buộc: câu hỏi, ≥1 trích dẫn (có <code>chunk_id</code> + ≥1 ý), answer_gt.</li>
+      <li>Cảnh báo trùng lặp câu hỏi trong cùng 1 loại.</li>
+      <li>Không cho vượt quá 5 câu/loại (hoặc cho, nhưng đánh dấu "phụ").</li>
+    </ul>
+  </div>
+</div>
+
+<!-- export modal -->
+<div class="modal-bg" id="exportBg">
+  <div class="modal">
+    <div class="modal-head"><h2>⬇ Xuất golden dataset</h2><button class="btn btn-ghost" onclick="closeExport()">✕</button></div>
+    <div class="modal-body">
+      <p>Xuất dữ liệu của <b id="expWho">bác sĩ</b> để gửi cho khâu đánh giá. (Đây là bản mockup — nút chỉ minh họa.)</p>
+      <div class="export-opts">
+        <button class="btn" onclick="flash('Đã xuất file JSON (mockup)')">⬇ JSON</button>
+        <button class="btn" onclick="flash('Đã xuất file CSV (mockup)')">⬇ CSV</button>
+        <button class="btn" onclick="flash('Đã copy vào clipboard (mockup)')">⧉ Copy</button>
+      </div>
+      <div class="code-prev" id="codePrev"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="mock-flag">⚑ Bản mockup — 24 loại &amp; dữ liệu là ví dụ để minh họa</div>
+
+<script>
+// ---------------- data ----------------
+// [ tên, mô tả cho chuyên gia, câu hỏi ví dụ mẫu ]
+const TYPES = [
+  ["Định nghĩa bệnh", "Hỏi bản chất / khái niệm của một bệnh hay hội chứng: nó là gì, được hiểu như thế nào theo guideline.", "Suy tim là gì?"],
+  ["Nguyên nhân / căn nguyên", "Hỏi vì sao mắc bệnh: nguyên nhân trực tiếp hoặc cơ chế bệnh sinh.", "Nguyên nhân thường gặp nhất gây xơ gan là gì?"],
+  ["Yếu tố nguy cơ", "Những yếu tố làm tăng khả năng mắc bệnh: tuổi, lối sống, bệnh nền, di truyền…", "Các yếu tố nguy cơ của đột quỵ não gồm những gì?"],
+  ["Triệu chứng lâm sàng", "Dấu hiệu người bệnh biểu hiện ra: triệu chứng cơ năng và thực thể.", "Viêm phổi cộng đồng thường có những triệu chứng gì?"],
+  ["Tiêu chuẩn chẩn đoán", "Ngưỡng / tiêu chí cụ thể để khẳng định một chẩn đoán.", "Tiêu chuẩn chẩn đoán đái tháo đường theo HbA1c là bao nhiêu?"],
+  ["Chẩn đoán phân biệt", "Phân biệt bệnh đang nghĩ tới với các bệnh có biểu hiện tương tự.", "Cần phân biệt cơn hen với những bệnh nào gây khó thở cấp?"],
+  ["Cận lâm sàng / xét nghiệm", "Nên chỉ định xét nghiệm / chẩn đoán hình ảnh nào và đọc kết quả ra sao.", "Nghi nhồi máu cơ tim cấp cần làm xét nghiệm gì đầu tiên?"],
+  ["Chỉ định điều trị", "Khi nào cần bắt đầu điều trị và chọn hướng điều trị nào.", "Khi nào bệnh nhân tăng huyết áp cần bắt đầu dùng thuốc?"],
+  ["Phác đồ dùng thuốc", "Phác đồ / thuốc đầu tay theo guideline cho một tình huống cụ thể.", "Phác đồ điều trị đầu tay cho viêm phổi cộng đồng mức độ nhẹ?"],
+  ["Liều lượng thuốc", "Liều cụ thể, đường dùng và cách dùng của một thuốc.", "Liều amoxicillin cho người lớn viêm họng do liên cầu là bao nhiêu?"],
+  ["Chống chỉ định", "Trường hợp KHÔNG được dùng một thuốc hay can thiệp.", "Metformin chống chỉ định trong những trường hợp nào?"],
+  ["Tác dụng phụ / biến chứng thuốc", "Tác dụng không mong muốn của điều trị cần lưu ý.", "Tác dụng phụ thường gặp của nhóm statin là gì?"],
+  ["Tương tác thuốc", "Tương tác thuốc–thuốc hoặc thuốc–thức ăn cần tránh.", "Warfarin tương tác với những thuốc / thực phẩm nào?"],
+  ["Theo dõi / tái khám", "Cần theo dõi chỉ số gì, tái khám vào lúc nào.", "Bệnh nhân dùng warfarin cần theo dõi xét nghiệm gì, bao lâu một lần?"],
+  ["Tiên lượng", "Diễn tiến và khả năng hồi phục của bệnh.", "Tiên lượng của suy tim phân suất tống máu giảm phụ thuộc yếu tố nào?"],
+  ["Biến chứng bệnh", "Các biến chứng có thể xảy ra khi bệnh tiến triển.", "Đái tháo đường lâu năm có thể gây những biến chứng nào?"],
+  ["Phòng ngừa", "Biện pháp dự phòng để không mắc hoặc không tái phát bệnh.", "Làm thế nào để dự phòng tái phát đột quỵ?"],
+  ["Chỉ định nhập viện / chuyển tuyến", "Tiêu chí cần nhập viện hoặc chuyển lên tuyến trên.", "Khi nào viêm phổi cần nhập viện thay vì điều trị ngoại trú?"],
+  ["Xử trí cấp cứu", "Cách xử trí ngay trong tình huống cấp / khẩn.", "Xử trí ban đầu sốc phản vệ như thế nào?"],
+  ["Đối tượng đặc biệt", "Điều chỉnh liều & lưu ý cho thai kỳ, trẻ em, người già, suy thận / gan.", "Kháng sinh nào an toàn cho phụ nữ có thai bị nhiễm khuẩn tiết niệu?"],
+  ["Dinh dưỡng / chế độ ăn", "Khuyến nghị ăn uống theo từng bệnh.", "Bệnh nhân suy thận mạn nên hạn chế những gì trong chế độ ăn?"],
+  ["Tư vấn lối sống", "Lời khuyên vận động, bỏ thuốc lá, rượu bia, cân nặng.", "Lời khuyên về lối sống cho bệnh nhân tăng huyết áp gồm những gì?"],
+  ["Sàng lọc / tầm soát", "Ai cần tầm soát, bằng cách nào và bao lâu một lần.", "Nên tầm soát ung thư cổ tử cung cho đối tượng nào, bao lâu một lần?"],
+  ["Tình huống lâm sàng tổng hợp", "Ca bệnh nhiều dữ kiện, cần suy luận kết hợp nhiều loại thông tin.", "Nam 60 tuổi, THA + đái tháo đường, đau ngực khi gắng sức — hướng chẩn đoán và xử trí?"]
+];
+
+const SPECIALTIES = ["Tim mạch","Nội tiết","Hô hấp","Nhi khoa","Tiêu hóa","Thần kinh","Cơ xương khớp","Truyền nhiễm","Sản phụ khoa","Da liễu","Thận – Tiết niệu","Hồi sức cấp cứu","Ung bướu","Tai Mũi Họng"];
+
+// counts[i] = số câu đã nhập cho loại i (tối đa 5). mkCounts(full, extraIdx, extraVal)
+function mkCounts(full, extraIdx, extraVal){ const a=new Array(24).fill(0); for(let i=0;i<full;i++)a[i]=5; if(extraIdx!==undefined)a[extraIdx]=extraVal; return a; }
+const DOCTORS = [
+  { id:"bs_01", name:"BS. Nguyễn Văn An", spec:"Tim mạch", counts: mkCounts(8, 8, 2) },   // 42
+  { id:"bs_02", name:"BS. Trần Thị Bình", spec:"Nội tiết", counts: mkCounts(17, 17, 3) }, // 88
+  { id:"bs_03", name:"BS. Lê Minh Cường", spec:"Hô hấp", counts: mkCounts(3) },            // 15
+  { id:"bs_04", name:"BS. Phạm Thu Hà", spec:"Nhi khoa", counts: mkCounts(24) },           // 120
+];
+function doctorTotal(d){ return d.counts.reduce((s,c)=>s+Math.min(5,c),0); }
+function doctorTypesDone(d){ return d.counts.filter(c=>c>=5).length; }
+
+// ---- CORPUS: guideline đã được chunk hóa & gán ID (retriever index chính các chunk này) ----
+const GUIDELINES = [
+  { id:"tha2022", title:"HD Tăng huyết áp – BYT 2022", version:"2022" },
+  { id:"dtd2020", title:"HD Đái tháo đường – BYT 2020", version:"2020" },
+];
+const CHUNKS = [
+  { id:"tha2022_ch2_s2.1", gl:"tha2022", loc:"Chương 2, Mục 2.1 – Định nghĩa", text:"Tăng huyết áp khi HA tâm thu ≥140 mmHg và/hoặc HA tâm trương ≥90 mmHg qua đo chuẩn tại phòng khám." },
+  { id:"tha2022_ch2_b2.2", gl:"tha2022", loc:"Chương 2, Bảng 2.2 – Phân độ", text:"Phân độ THA: độ 1 (140–159/90–99), độ 2 (160–179/100–109), độ 3 (≥180/≥110) mmHg." },
+  { id:"tha2022_ch4_s4.1", gl:"tha2022", loc:"Chương 4, Mục 4.1 – Điều trị không dùng thuốc", text:"Thay đổi lối sống: giảm muối <5g/ngày, hạn chế rượu, tăng vận động, giảm cân, ngừng thuốc lá." },
+  { id:"tha2022_ch5_s5.1", gl:"tha2022", loc:"Chương 5, Mục 5.1 – Thuốc đầu tay", text:"Nhóm thuốc đầu tay: ức chế men chuyển/chẹn thụ thể, chẹn kênh canxi, lợi tiểu thiazide." },
+  { id:"tha2022_ch7_s7.1", gl:"tha2022", loc:"Chương 7, Mục 7.1 – THA cấp cứu", text:"THA cấp cứu: HA tăng rất cao KÈM tổn thương cơ quan đích cấp; cần hạ áp ngay bằng đường tĩnh mạch." },
+  { id:"tha2022_ch7_s7.2", gl:"tha2022", loc:"Chương 7, Mục 7.2 – THA khẩn trương", text:"THA khẩn trương: HA tăng cao NHƯNG chưa có tổn thương cơ quan đích cấp; hạ áp bằng đường uống trong vài giờ–ngày." },
+  { id:"dtd2020_ch3_s3.1", gl:"dtd2020", loc:"Chương 3, Mục 3.1 – Tiêu chuẩn chẩn đoán", text:"Chẩn đoán ĐTĐ khi: glucose đói ≥7,0 mmol/L, hoặc HbA1c ≥6,5%, hoặc glucose 2h sau OGTT 75g ≥11,1 mmol/L." },
+  { id:"dtd2020_ch5_s5.2", gl:"dtd2020", loc:"Chương 5, Mục 5.2 – Metformin", text:"Metformin là thuốc đầu tay; chống chỉ định khi eGFR <30, toan chuyển hóa, suy gan nặng." },
+];
+function chunkById(id){ return CHUNKS.find(c=>c.id===id); }
+function glById(id){ return GUIDELINES.find(g=>g.id===id); }
+function chunkLabel(id){ const c=chunkById(id); if(!c) return id||'(chưa gán đoạn)'; const g=glById(c.gl); return (g?g.title+' · ':'')+c.loc; }
+
+// sample filled entries — cites giờ neo bằng chunk_id
+const SAMPLE = {
+  0: [
+    { q:"Tăng huyết áp được định nghĩa như thế nào ở người trưởng thành?",
+      cites:[ { chunk_id:"tha2022_ch2_s2.1", points:[
+        "THA khi HA tâm thu ≥140 mmHg và/hoặc HA tâm trương ≥90 mmHg",
+        "Ngưỡng áp dụng cho đo chuẩn tại phòng khám" ] } ],
+      a:"Ở người trưởng thành, tăng huyết áp được xác định khi HA tâm thu ≥140 mmHg và/hoặc tâm trương ≥90 mmHg (đo chuẩn tại phòng khám)." },
+    { q:"Phân độ tăng huyết áp gồm mấy độ và ngưỡng ra sao?",
+      cites:[ { chunk_id:"tha2022_ch2_b2.2", points:[
+        "THA độ 1: HATT 140–159 hoặc HATTr 90–99",
+        "THA độ 2: HATT 160–179 hoặc HATTr 100–109",
+        "THA độ 3: HATT ≥180 hoặc HATTr ≥110" ] } ],
+      a:"THA chia 3 độ: độ 1 (140–159/90–99), độ 2 (160–179/100–109), độ 3 (≥180/≥110) mmHg." },
+    { q:"Cơn tăng huyết áp cấp cứu khác cơn khẩn trương ở điểm nào?",
+      cites:[
+        { chunk_id:"tha2022_ch7_s7.1", points:["THA cấp cứu: HA tăng rất cao KÈM tổn thương cơ quan đích cấp"] },
+        { chunk_id:"tha2022_ch7_s7.2", points:["THA khẩn trương: HA tăng cao NHƯNG chưa có tổn thương cơ quan đích cấp"] } ],
+      a:"Khác nhau ở tổn thương cơ quan đích: cấp cứu có tổn thương cơ quan đích cấp (cần hạ áp ngay bằng đường TM), khẩn trương thì chưa có (hạ áp bằng đường uống trong vài giờ–ngày)." },
+  ],
+  6: [
+    { q:"Bệnh nhân nghi đái tháo đường cần làm xét nghiệm gì để chẩn đoán?",
+      cites:[ { chunk_id:"dtd2020_ch3_s3.1", points:[
+        "Glucose huyết tương lúc đói ≥7,0 mmol/L",
+        "HbA1c ≥6,5%",
+        "Nghiệm pháp dung nạp glucose 75g: glucose 2h ≥11,1 mmol/L" ] } ],
+      a:"Định lượng glucose huyết tương lúc đói, HbA1c, hoặc nghiệm pháp dung nạp glucose 75g; đạt 1 trong các ngưỡng chẩn đoán là xác định ĐTĐ." },
+  ],
+};
+
+// build working state
+let state = {};
+TYPES.forEach((t,i)=>{ state[i] = (SAMPLE[i]||[]).map(e=>({...e})); });
+let current = 0;
+let currentDoctor = null;
+
+// ---------------- picker ----------------
+function initials(name){ const p=name.replace(/^BS\.\s*/,'').trim().split(' '); return (p[p.length-1][0]||'B').toUpperCase(); }
+function renderPicker(){
+  const g = document.getElementById('docGrid'); g.innerHTML='';
+  DOCTORS.forEach(d=>{
+    const tot=doctorTotal(d);
+    const b=document.createElement('button'); b.className='doc';
+    b.innerHTML = `<span class="av">${initials(d.name)}</span>
+      <span><b>${d.name}</b><small>${d.spec}</small></span>
+      <span class="prog"><b class="tnum">${tot}/120</b><br><small>${tot>=120?'Hoàn thành':(tot>0?'đang nhập':'chưa bắt đầu')}</small></span>`;
+    b.onclick=()=>pickDoctor(d);
+    g.appendChild(b);
+  });
+}
+// build a doctor's working state from their per-type counts (real samples + fillers)
+function fillerEntry(i,k){
+  return {
+    q: TYPES[i][2] + (k>0 ? ' (biến thể '+(k+1)+')' : ''),
+    cites: [{ chunk_id:"", points:["(nội dung trích dẫn mẫu)"] }],
+    a: "(câu trả lời mẫu — chuyên gia nhập nội dung chuẩn tại đây)"
+  };
+}
+function buildStateForDoctor(d){
+  const st={};
+  TYPES.forEach((t,i)=>{
+    const arr=[]; const n=d.counts[i]||0;
+    for(let k=0;k<n;k++){ arr.push(SAMPLE[i]&&SAMPLE[i][k] ? {...SAMPLE[i][k]} : fillerEntry(i,k)); }
+    st[i]=arr;
+  });
+  return st;
+}
+function pickDoctor(d){
+  currentDoctor = d;
+  state = buildStateForDoctor(d);
+  document.getElementById('whoName').textContent = d.name;
+  document.getElementById('whoSpec').textContent = d.spec;
+  document.getElementById('whoAv').textContent = initials(d.name);
+  document.getElementById('expWho').textContent = d.name;
+  document.getElementById('screen-admin').classList.add('hidden');
+  document.getElementById('screen-pick').classList.add('hidden');
+  document.getElementById('screen-work').classList.remove('hidden');
+  renderTypes(); selectType(0); updateOverall();
+  window.scrollTo(0,0);
+}
+function backToPick(){
+  document.getElementById('screen-work').classList.add('hidden');
+  document.getElementById('screen-pick').classList.remove('hidden');
+  renderPicker();
+}
+
+// ---------------- admin ----------------
+function openAdmin(){
+  document.getElementById('screen-pick').classList.add('hidden');
+  document.getElementById('screen-work').classList.add('hidden');
+  document.getElementById('screen-admin').classList.remove('hidden');
+  document.getElementById('addbox').classList.add('hidden');
+  renderAdmin(); window.scrollTo(0,0);
+}
+function adminToPick(){
+  document.getElementById('screen-admin').classList.add('hidden');
+  document.getElementById('screen-pick').classList.remove('hidden');
+  renderPicker();
+}
+function renderAdmin(){
+  const totalDoc=DOCTORS.length;
+  const totalQ=DOCTORS.reduce((s,d)=>s+doctorTotal(d),0);
+  const target=totalDoc*120;
+  const pct=target?Math.round(totalQ/target*100):0;
+  const doneDoc=DOCTORS.filter(d=>doctorTotal(d)>=120).length;
+  document.getElementById('tiles').innerHTML=`
+    <div class="tile"><div class="k">Bác sĩ tham gia</div><div class="v tnum">${totalDoc}</div></div>
+    <div class="tile accent"><div class="k">Câu đã thu</div><div class="v tnum">${totalQ}<small>/${target}</small></div></div>
+    <div class="tile"><div class="k">Hoàn thành</div><div class="v tnum">${pct}<small>%</small></div></div>
+    <div class="tile"><div class="k">Bác sĩ đã xong</div><div class="v tnum">${doneDoc}<small>/${totalDoc}</small></div></div>`;
+
+  const tb=document.getElementById('dbody'); tb.innerHTML='';
+  DOCTORS.forEach(d=>{
+    const tot=doctorTotal(d), td=doctorTypesDone(d), pctd=Math.round(tot/120*100);
+    const st = tot>=120?['done','Hoàn thành'] : (tot>0?['prog','Đang nhập']:['new','Chưa bắt đầu']);
+    const mini=d.counts.map(c=>`<i class="${c>=5?'done':(c>0?'partial':'')}"></i>`).join('');
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><div class="dname"><span class="av">${initials(d.name)}</span><span><b>${escapeH(d.name)}</b><small>${d.id}</small></span></div></td>
+      <td><span class="chip">${escapeH(d.spec)}</span></td>
+      <td><div class="pbar"><div class="bar"><div class="fill" style="width:${pctd}%"></div></div><small class="tnum">${tot}/120</small></div></td>
+      <td class="ctr tnum">${td}/24</td>
+      <td><div class="minimap" title="24 loại — xanh: đủ 5/5, cam: đang nhập, xám: chưa có">${mini}</div></td>
+      <td><span class="stpill ${st[0]}">${st[1]}</span></td>
+      <td><button class="tlink" onclick="pickDoctorById('${d.id}')">Xem →</button></td>`;
+    tb.appendChild(tr);
+  });
+}
+function pickDoctorById(id){ const d=DOCTORS.find(x=>x.id===id); if(d){ document.getElementById('screen-admin').classList.add('hidden'); pickDoctor(d); } }
+function toggleAddDoc(){
+  const b=document.getElementById('addbox'); b.classList.toggle('hidden');
+  if(!b.classList.contains('hidden')){
+    const sel=document.getElementById('ndSpec');
+    sel.innerHTML=SPECIALTIES.map(s=>`<option>${s}</option>`).join('');
+    const nm=document.getElementById('ndName'); nm.value=''; nm.focus();
+  }
+}
+function addDoctor(){
+  const raw=document.getElementById('ndName').value.trim();
+  const spec=document.getElementById('ndSpec').value;
+  if(!raw){ flash('⚠ Nhập họ tên bác sĩ'); return; }
+  const name = /^bs\.?\s/i.test(raw) ? raw : ('BS. '+raw);
+  const id='bs_'+String(DOCTORS.length+1).padStart(2,'0');
+  DOCTORS.push({ id, name, spec, counts:new Array(24).fill(0) });
+  toggleAddDoc(); renderAdmin(); flash('✓ Đã thêm '+name+' — '+spec);
+}
+
+// ---------------- sidebar ----------------
+function statusOf(i){ const n=state[i].length; return n>=5?'done':(n>0?'partial':'empty'); }
+function renderTypes(){
+  const list=document.getElementById('typeList'); list.innerHTML='';
+  let doneTypes=0;
+  TYPES.forEach((t,i)=>{
+    const n=state[i].length, st=statusOf(i); if(st==='done')doneTypes++;
+    const b=document.createElement('button'); b.className='type'+(i===current?' active':'');
+    b.innerHTML=`<span class="dot ${st}"></span><span class="num tnum">${String(i+1).padStart(2,'0')}</span>
+      <span class="nm">${t[0]}</span>
+      <span class="badge ${st} tnum">${n}/5</span>`;
+    b.title=t[1];
+    b.onclick=()=>selectType(i);
+    list.appendChild(b);
+  });
+  document.getElementById('typeCnt').textContent = `${doneTypes}/24 loại xong`;
+}
+
+function selectType(i){
+  current=i; clearForm();
+  document.getElementById('crumb').textContent=`Loại ${i+1} / 24` + (currentDoctor? ` · Chuyên khoa ${currentDoctor.spec}` : '');
+  document.getElementById('typeName').textContent=TYPES[i][0];
+  document.getElementById('typeDesc').textContent=TYPES[i][1];
+  document.getElementById('typeEg').textContent='“'+TYPES[i][2]+'”';
+  renderTypes(); renderSlots(); updateProgressUI();
+  document.querySelector('.main').scrollTo(0,0);
+}
+
+function updateProgressUI(){
+  const n=state[current].length;
+  const pill=document.getElementById('typePill');
+  pill.textContent=`${n}/5`; pill.className='pill'+(n>=5?' done':'');
+  document.getElementById('remain').textContent=Math.max(0,5-n);
+}
+
+function renderSlots(){
+  const wrap=document.getElementById('slotList'); wrap.innerHTML='';
+  const entries=state[current];
+  for(let k=0;k<Math.max(5,entries.length);k++){
+    const e=entries[k];
+    const s=document.createElement('div');
+    if(e){
+      s.className='slot filled';
+      const citesHtml=(e.cites||[]).map(c=>{
+        const ch=chunkById(c.chunk_id);
+        return `<div class="cite-view">
+          <div class="loc">${escapeH(chunkLabel(c.chunk_id))} ${ch?`<span class="cid">[${ch.id}]</span>`:''}</div>
+          <ul>${(c.points||[]).map(p=>`<li>${escapeH(p)}</li>`).join('')}</ul>
+        </div>`;}).join('');
+      s.innerHTML=`<div class="slot-top" onclick="this.parentNode.classList.toggle('open')">
+          <span class="ix">${k+1}</span><span class="q">${escapeH(e.q)}</span><span class="chev">▾</span></div>
+        <div class="slot-body">
+          <div class="lbl">Thông tin cần truy vấn — ${(e.cites||[]).length} trích dẫn (retrieval GT)</div>
+          <div class="val">${citesHtml||'—'}</div>
+          <div class="lbl">Câu trả lời mong muốn (answer GT)</div><div class="val">${escapeH(e.a)}</div>
+        </div>`;
+    } else {
+      s.className='slot empty';
+      s.innerHTML=`<div class="slot-top"><span class="ix">${k+1}</span><span class="q">Ô trống — chưa nhập câu hỏi thứ ${k+1}</span></div>`;
+    }
+    wrap.appendChild(s);
+  }
+}
+
+// ---------------- citations builder ----------------
+function chunkOptions(sel){
+  let h='<option value="">— Chọn đoạn guideline —</option>';
+  GUIDELINES.forEach(g=>{
+    h+=`<optgroup label="${g.title}">`;
+    CHUNKS.filter(c=>c.gl===g.id).forEach(c=>{
+      h+=`<option value="${c.id}"${c.id===sel?' selected':''}>${c.loc}  ·  [${c.id}]</option>`;
+    });
+    h+='</optgroup>';
+  });
+  return h;
+}
+function onChunkPick(sel){
+  const c=chunkById(sel.value);
+  const prev=sel.closest('.cite').querySelector('.chunk-prev');
+  if(c){ prev.innerHTML=`<span class="cp-tag">Nội dung đoạn</span>${escapeH(c.text)}`; prev.classList.add('on'); }
+  else { prev.textContent='Chọn đoạn guideline để xem nội dung…'; prev.classList.remove('on'); }
+}
+function addCite(pre){
+  const list=document.getElementById('citeList');
+  const el=document.createElement('div'); el.className='cite';
+  el.innerHTML=`<div class="cite-head">
+      <span class="cidx">1</span>
+      <select class="ci-chunk" onchange="onChunkPick(this)">${chunkOptions(pre?pre.chunk_id:'')}</select>
+      <button class="rm" type="button" title="Xóa trích dẫn" onclick="this.closest('.cite').remove();reindexCites()">✕ Xóa</button>
+    </div>
+    <div class="chunk-prev">Chọn đoạn guideline để xem nội dung…</div>
+    <div class="points"></div>
+    <button class="add-point" type="button" onclick="addPoint(this.previousElementSibling)">+ Thêm ý</button>`;
+  list.appendChild(el);
+  const pts=el.querySelector('.points');
+  if(pre){ (pre.points&&pre.points.length?pre.points:['']).forEach(p=>addPoint(pts,p)); }
+  else addPoint(pts);
+  onChunkPick(el.querySelector('.ci-chunk'));
+  reindexCites();
+}
+function addPoint(container,v){
+  const p=document.createElement('div'); p.className='point';
+  p.innerHTML=`<span class="bul">–</span>
+    <input type="text" placeholder="Một ý lấy từ trích dẫn này (VD: đau đầu phải chữa abc)">
+    <button class="rm" type="button" title="Xóa ý" onclick="this.closest('.point').remove()">✕</button>`;
+  container.appendChild(p);
+  if(v) p.querySelector('input').value=v;
+}
+function reindexCites(){ document.querySelectorAll('#citeList .cidx').forEach((e,i)=>e.textContent=i+1); }
+function collectCites(){
+  const out=[];
+  document.querySelectorAll('#citeList .cite').forEach(c=>{
+    const chunk_id=c.querySelector('.ci-chunk').value;
+    const points=[...c.querySelectorAll('.points input')].map(i=>i.value.trim()).filter(Boolean);
+    if(chunk_id||points.length) out.push({chunk_id,points});
+  });
+  return out;
+}
+
+// ---------------- form ----------------
+function saveEntry(){
+  const q=val('fQ'), a=val('fA'), cites=collectCites();
+  const okCite=cites.some(c=>c.chunk_id && c.points.length>0);
+  if(!q||!a||!okCite){ flash('⚠ Cần: Câu hỏi, ≥1 trích dẫn (chọn đoạn + có ít nhất 1 ý), và Câu trả lời'); return; }
+  if(state[current].length>=5){ flash('Loại này đã đủ 5/5 câu'); return; }
+  state[current].push({ q, a, cites });
+  clearForm(); renderTypes(); renderSlots(); updateProgressUI(); updateOverall();
+  flash('✓ Đã lưu câu hỏi');
+}
+function clearForm(){
+  document.getElementById('fQ').value=''; document.getElementById('fA').value='';
+  document.getElementById('citeList').innerHTML=''; addCite();
+}
+function val(id){ return document.getElementById(id).value.trim(); }
+function useExample(){
+  const q=document.getElementById('fQ'); q.value=TYPES[current][2]; q.focus();
+  flash('Đã điền câu ví dụ — bạn chỉnh lại theo ý mình nhé');
+}
+
+function updateOverall(){
+  let total=0; TYPES.forEach((t,i)=>total+=Math.min(5,state[i].length));
+  document.getElementById('ovNum').textContent=total;
+  document.getElementById('ovFill').style.width=(total/120*100)+'%';
+}
+
+// ---------------- spec drawer ----------------
+function toggleSpec(on){ document.getElementById('drawer').classList.toggle('on',on); document.getElementById('drawerBg').classList.toggle('on',on); }
+
+// ---------------- export ----------------
+function openExport(){
+  const sample={ doctor: currentDoctor?currentDoctor.name:'', total: (()=>{let s=0;TYPES.forEach((t,i)=>s+=state[i].length);return s;})(),
+    records: state[current].slice(0,2).map((e,i)=>({ type_id: current+1, type: TYPES[current][0], question:e.q,
+      retrieval_gt:(e.cites||[]).map(c=>{ const ch=chunkById(c.chunk_id), g=ch?glById(ch.gl):null;
+        return { chunk_ids: c.chunk_id?[c.chunk_id]:[], source:{ doc:g?g.title:'', loc:ch?ch.loc:'' }, points:c.points }; }),
+      answer_gt:e.a })) };
+  document.getElementById('codePrev').textContent=JSON.stringify(sample,null,2);
+  document.getElementById('exportBg').classList.add('on');
+}
+function closeExport(){ document.getElementById('exportBg').classList.remove('on'); }
+document.getElementById('exportBg').addEventListener('click',e=>{ if(e.target.id==='exportBg') closeExport(); });
+
+// ---------------- utils ----------------
+function escapeH(s){ return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+let toastT;
+function flash(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('on'),1900); }
+
+renderPicker();
+</script>

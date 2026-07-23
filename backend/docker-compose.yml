@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: golden
+      POSTGRES_PASSWORD: golden
+      POSTGRES_DB: golden_dataset
+    ports:
+      - "5437:5432"
+    volumes:
+      - golden_dataset_pg:/var/lib/postgresql/data
+
+volumes:
+  golden_dataset_pg:
